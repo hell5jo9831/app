@@ -1,0 +1,60 @@
+import customtkinter as ctk
+import random
+
+# إعداد الثيم العام
+ctk.set_appearance_mode("light")  # أو "dark"
+ctk.set_default_color_theme("green")  # ممكن: "blue", "dark-blue", "green"
+
+# توليد رقم مصري عشوائي
+def generate_egyptian_number():
+    prefixes = ["010", "011", "012", "015"]
+    prefix = random.choice(prefixes)
+    number = "".join([str(random.randint(0, 9)) for _ in range(8)])
+    return prefix + number
+
+# عند الضغط على زر التوليد
+def generate_numbers():
+    try:
+        count = int(entry.get())
+        if count <= 0:
+            raise ValueError
+
+        phone_numbers = set()
+        while len(phone_numbers) < count:
+            phone_numbers.add(generate_egyptian_number())
+
+        result_box.configure(state="normal")
+        result_box.delete("0.0", "end")
+        for number in phone_numbers:
+            result_box.insert("end", number + "\n")
+        result_box.configure(state="disabled")
+
+    except ValueError:
+        ctk.CTkMessagebox(title="Error", message="Please enter a valid number.", icon="cancel")
+
+# إنشاء النافذة الرئيسية
+app = ctk.CTk()
+app.title("📱 Egyptian Number Generator")
+app.geometry("460x550")
+app.resizable(False, False)
+
+# عنوان
+title = ctk.CTkLabel(app, text="How many phone numbers do you want to generate?",
+                     font=ctk.CTkFont(size=16, weight="bold"))
+title.pack(pady=(30, 10))
+
+# خانة الإدخال
+entry = ctk.CTkEntry(app, width=220, font=ctk.CTkFont(size=14), justify="center")
+entry.pack(pady=(0, 15))
+
+# زر التوليد
+generate_button = ctk.CTkButton(app, text="Generate", command=generate_numbers, width=150)
+generate_button.pack(pady=10)
+
+# صندوق النتائج
+result_box = ctk.CTkTextbox(app, width=400, height=300, font=("Consolas", 13))
+result_box.pack(pady=20)
+result_box.configure(state="disabled")
+
+# تشغيل التطبيق
+app.mainloop()
